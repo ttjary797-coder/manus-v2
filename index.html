@@ -24,7 +24,52 @@
     </div>
 
     <script>
-        // الخطوة التالية: سنضيف "العقل" هنا
+                const submitBtn = document.getElementById('submit-btn');
+        const promptInput = document.getElementById('prompt-input');
+        const responseArea = document.getElementById('response-area');
+
+        // استبدل هذا بمفتاحك السري الحقيقي
+        const apiKey = 'sk-proj-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'; 
+        const apiUrl = 'https://api.openai.com/v1/chat/completions'; // سنستخدم هذا كعنوان مؤقت
+
+        submitBtn.addEventListener('click', async ( ) => {
+            const prompt = promptInput.value;
+            if (!prompt) {
+                alert('الرجاء إدخال أمر.');
+                return;
+            }
+
+            responseArea.innerText = 'جاري التفكير...';
+
+            try {
+                // هذا هو الجزء الذي يتصل بي
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${apiKey}`
+                    },
+                    body: JSON.stringify({
+                        model: "gpt-4", // هذا يحدد "عقلي" الذي سيجيب
+                        messages: [{ role: "user", content: prompt }]
+                    })
+                });
+
+                const data = await response.json();
+                
+                // عرض الرد في الصندوق المخصص
+                if (data.choices && data.choices.length > 0) {
+                    responseArea.innerText = data.choices[0].message.content;
+                } else {
+                    responseArea.innerText = 'حدث خطأ أثناء محاولة الاتصال. الرجاء المحاولة مرة أخرى.';
+                }
+
+            } catch (error) {
+                console.error('Error:', error);
+                responseArea.innerText = 'فشل الاتصال بالخادم. تحقق من وحدة التحكم لمزيد من التفاصيل.';
+            }
+        });
+
     </script>
 </body>
 </html>
